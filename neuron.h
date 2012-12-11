@@ -20,7 +20,7 @@ class Neuron
 
     double activation( vector< double > &inputs );
     inline double sigmoid( double x );
-    inline double threshold( double x ) { if( x > 0 ) return 1.0; else return 0.0; };
+    inline double threshold( double x ) { if( x >= 0 ) return 1.0; else return 0.0; };
 
   private:
 
