@@ -76,5 +76,5 @@ void Perceptron::add( vector< double > &inputs, double scale )
     get_weights()[ i ] += scale * inputs[ i ];
   }
 
-  get_weights()[ i ] += scale * -1;
+  get_weights()[ i ] += scale;
 }

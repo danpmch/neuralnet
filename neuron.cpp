@@ -42,7 +42,7 @@ double Neuron::activation( vector< double > &inputs )
   {
     active += weights[ i ] * inputs[ i ];
   }
-  active += -1.0 * weights[ i ];
+  active += weights[ i ];
 
   if( type == SIGMOID )
     return sigmoid( active );
