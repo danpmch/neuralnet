@@ -1,0 +1,5 @@
+
+*.o
+*.swp
+tags
+perceptron_test
