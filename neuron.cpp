@@ -32,7 +32,7 @@ Neuron::Neuron( vector< double > &w, Function func )
   type = func;
 }
 
-double Neuron::activation( vector< double > &inputs )
+double Neuron::accumulate_activation( vector< double > inputs )
 {
   if( inputs.size() != weights.size() - 1 ) throw new invalid_argument( "Input length doesn't match weight vector length" );
 
@@ -44,13 +44,10 @@ double Neuron::activation( vector< double > &inputs )
   }
   active += weights[ i ];
 
-  if( type == SIGMOID )
-    return sigmoid( active );
-  else
-    return threshold( active );
+  return active;
 }
 
-inline double Neuron::sigmoid( double x )
+double SigmoidNeuron::sigmoid( double x )
 {
   double e_pow = 1.0 + pow( E, -x );
   return 1.0 / e_pow;

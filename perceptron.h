@@ -9,13 +9,13 @@ struct example
   vector< double > outputs;
 };
 
-class Perceptron : public Neuron
+class Perceptron : public ThresholdNeuron
 {
 
   public:
 
     Perceptron( int num_inputs );
-    Perceptron( vector< double > &w ) : Neuron( w, THRESHOLD ) {};
+    Perceptron( vector< double > &w ) : ThresholdNeuron( w ) {};
 
     void train( vector< example > &examples, double error_thresh = 0.0 );
 

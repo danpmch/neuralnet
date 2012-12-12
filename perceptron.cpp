@@ -6,7 +6,7 @@
 
 using namespace std;
 
-Perceptron::Perceptron( int num_inputs ) : Neuron( num_inputs, THRESHOLD )
+Perceptron::Perceptron( int num_inputs ) : ThresholdNeuron( num_inputs )
 {
   for( int i = 0; i < get_weights().size(); i++ )
     get_weights()[ i ] = 0.0;
@@ -15,31 +15,6 @@ Perceptron::Perceptron( int num_inputs ) : Neuron( num_inputs, THRESHOLD )
 void Perceptron::train( vector< example > &examples, double error_thresh )
 {
   cout << "Error threshold: " << error_thresh << endl;
-
-  /*
-  double iteration_error = error_thresh + 10;
-  while( abs( iteration_error ) > error_thresh )
-  {
-    iteration_error = 0.0;
-
-    for( int e = 0; e < examples.size(); e++ )
-    {
-      example current = examples[ e ];
-      double a = activation( current.inputs );
-      cout << "Computed activation: " << a << endl;
-
-      double error = current.outputs[ 0 ] - a;
-      cout << "Computed error: " << error << endl;
-      iteration_error += error;
-
-      add( current.inputs, error );
-      cout << "New weights: "; print_vec( get_weights() );
-    }
-    iteration_error /= examples.size();
-
-    cout << "Iteration error this round: " << iteration_error << endl;
-  }
-  */
 
   srand( time( NULL ) );
   while( abs( error( examples ) ) > error_thresh )
