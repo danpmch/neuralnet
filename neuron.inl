@@ -11,10 +11,10 @@ double rand_clamped()
 }
 
 template < int TOTAL_INPUTS >
-Neuron< TOTAL_INPUTS >::Neuron( int num_inputs )
+Neuron< TOTAL_INPUTS >::Neuron()
 {
   srand( time( NULL ) );
-  for( int i = 0; i < num_inputs + 1; i++ )
+  for( int i = 0; i < TOTAL_INPUTS + 1; i++ )
   {
     weights[ i ] = rand_clamped();
   }
@@ -23,6 +23,7 @@ Neuron< TOTAL_INPUTS >::Neuron( int num_inputs )
 template < int TOTAL_INPUTS >
 Neuron< TOTAL_INPUTS >::Neuron( vector< double > &w )
 {
+  if( w.size() != TOTAL_INPUTS + 1 ) throw new invalid_argument( "Input weight vector isn't the right size" );
   for( int i = 0; i < w.size(); i++ )
   {
     weights[ i ] = w[ i ];

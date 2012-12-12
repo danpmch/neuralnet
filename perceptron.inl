@@ -7,7 +7,7 @@
 using namespace std;
 
 template < int TOTAL_INPUTS >
-Perceptron< TOTAL_INPUTS >::Perceptron( int num_inputs ) : ThresholdNeuron< TOTAL_INPUTS >( num_inputs )
+Perceptron< TOTAL_INPUTS >::Perceptron()
 {
   for( int i = 0; i < TOTAL_INPUTS + 1; i++ )
     this->get_weights()[ i ] = 0.0;

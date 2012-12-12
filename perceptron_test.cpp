@@ -63,11 +63,11 @@ int main()
   correct_weights.push_back( 1.0 );
   correct_weights.push_back( 1.0 );
   correct_weights.push_back( 2.0 );
-  Perceptron<2> p_correct( correct_weights );
+  Perceptron<2> p_correct;
 
   print_results( examples_2input, p_correct );
 
-  Perceptron<2> p_and( 2 );
+  Perceptron<2> p_and;
   cout << "Training perceptron. Hold onto your butts...\n";
   p_and.train( examples_2input );
   cout << "Final perceptron weights: "; print_arr( p_and.get_weights(), 3 );
@@ -80,7 +80,7 @@ int main()
   load_examples( or_truth_table, 4, 3, examples_2input );
   print_examples( examples_2input );
 
-  Perceptron<2> p_or( 2 );
+  Perceptron<2> p_or;
   p_or.train( examples_2input );
   cout << "Final perceptron weights: "; print_arr( p_or.get_weights(), 3 );
   print_results( examples_2input, p_or);

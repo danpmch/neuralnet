@@ -15,7 +15,7 @@ class Perceptron : public ThresholdNeuron< TOTAL_INPUTS >
 
   public:
 
-    Perceptron( int num_inputs );
+    Perceptron();
     Perceptron( vector< double > &w ) : ThresholdNeuron< TOTAL_INPUTS >( w ) {};
 
     void train( vector< example > &examples, double error_thresh = 0.0 );

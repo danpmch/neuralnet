@@ -9,7 +9,7 @@ class Neuron
 {
   public:
 
-    Neuron( int num_inputs );
+    Neuron();
     Neuron( vector< double > &w );
 
     double * get_weights() { return weights; }
@@ -30,7 +30,7 @@ template < int TOTAL_INPUTS >
 class ThresholdNeuron : public Neuron< TOTAL_INPUTS >
 {
   public:
-    ThresholdNeuron( int num_inputs ) : Neuron< TOTAL_INPUTS >( num_inputs ) {}
+    ThresholdNeuron() {}
     ThresholdNeuron( vector< double > &w ) : Neuron< TOTAL_INPUTS >( w ) {}
 
     virtual double activation( vector< double > &inputs ) { return threshold( this->accumulate_activation( inputs ) ); }
@@ -41,7 +41,7 @@ template < int TOTAL_INPUTS >
 class SigmoidNeuron : public Neuron< TOTAL_INPUTS >
 {
   public:
-    SigmoidNeuron( int num_inputs ) : Neuron< TOTAL_INPUTS >( num_inputs ) {}
+    SigmoidNeuron() {}
     SigmoidNeuron( vector< double > &w ) : Neuron< TOTAL_INPUTS >( w ) {}
 
     virtual double activation( vector< double > &inputs ) { return sigmoid( this->accumulate_activation( inputs ) ); }
