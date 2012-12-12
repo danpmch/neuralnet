@@ -19,4 +19,18 @@ void print_vec( vector< T > &vec )
   cout << " >" << endl;
 }
 
+template <class T>
+void print_arr( T * arr, int size )
+{
+  cout << "< ";
+  for( int i = 0; i < size; i++ )
+  {
+    cout << arr[ i ];
+    if( i < size - 1 )
+      cout << ", ";
+  }
+  cout << " >" << endl;
+}
+
+
 #endif

@@ -9,13 +9,14 @@ struct example
   vector< double > outputs;
 };
 
-class Perceptron : public ThresholdNeuron
+template < int TOTAL_INPUTS >
+class Perceptron : public ThresholdNeuron< TOTAL_INPUTS >
 {
 
   public:
 
     Perceptron( int num_inputs );
-    Perceptron( vector< double > &w ) : ThresholdNeuron( w ) {};
+    Perceptron( vector< double > &w ) : ThresholdNeuron< TOTAL_INPUTS >( w ) {};
 
     void train( vector< example > &examples, double error_thresh = 0.0 );
 
@@ -26,5 +27,7 @@ class Perceptron : public ThresholdNeuron
     void add( vector< double > &inputs, double scale );
 
 };
+
+#include "perceptron.cpp"
 
 #endif

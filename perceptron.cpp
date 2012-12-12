@@ -6,13 +6,15 @@
 
 using namespace std;
 
-Perceptron::Perceptron( int num_inputs ) : ThresholdNeuron( num_inputs )
+template < int TOTAL_INPUTS >
+Perceptron< TOTAL_INPUTS >::Perceptron( int num_inputs ) : ThresholdNeuron< TOTAL_INPUTS >( num_inputs )
 {
-  for( int i = 0; i < get_weights().size(); i++ )
-    get_weights()[ i ] = 0.0;
+  for( int i = 0; i < TOTAL_INPUTS + 1; i++ )
+    this->get_weights()[ i ] = 0.0;
 }
 
-void Perceptron::train( vector< example > &examples, double error_thresh )
+template < int TOTAL_INPUTS >
+void Perceptron< TOTAL_INPUTS >::train( vector< example > &examples, double error_thresh )
 {
   cout << "Error threshold: " << error_thresh << endl;
 
@@ -22,20 +24,21 @@ void Perceptron::train( vector< example > &examples, double error_thresh )
     int e = rand() % examples.size();
     cout << "Using example " << e << endl;
     example &current = examples[ e ];
-    double a = activation( current.inputs );
+    double a = this->activation( current.inputs );
     cout << "Desired: " << current.outputs[ 0 ] << " Actual: " << a << " Error: " << current.outputs[ 0 ] - a << endl;
     add( current.inputs, current.outputs[ 0 ] - a );
   }
 
 }
 
-double Perceptron::error( vector< example > &examples )
+template < int TOTAL_INPUTS >
+double Perceptron< TOTAL_INPUTS >::error( vector< example > &examples )
 {
   double total_error = 0.0;
   for( int e = 0; e < examples.size(); e++ )
   {
     example &current = examples[ e ];
-    double a = activation( current.inputs );
+    double a = this->activation( current.inputs );
     total_error += current.outputs[ 0 ] - a;
   }
 
@@ -43,13 +46,14 @@ double Perceptron::error( vector< example > &examples )
   return total_error / examples.size();
 }
 
-void Perceptron::add( vector< double > &inputs, double scale )
+template < int TOTAL_INPUTS >
+void Perceptron< TOTAL_INPUTS >::add( vector< double > &inputs, double scale )
 {
   int i;
   for( i = 0; i < inputs.size(); i++ )
   {
-    get_weights()[ i ] += scale * inputs[ i ];
+    this->get_weights()[ i ] += scale * inputs[ i ];
   }
 
-  get_weights()[ i ] += scale;
+  this->get_weights()[ i ] += scale;
 }

@@ -1,4 +1,3 @@
-#include "neuron.h"
 #include <stdexcept>
 #include <cstdlib>
 #include <cmath>
@@ -11,30 +10,29 @@ double rand_clamped()
   return r / RAND_MAX;
 }
 
-Neuron::Neuron( int num_inputs, Function func )
+template < int TOTAL_INPUTS >
+Neuron< TOTAL_INPUTS >::Neuron( int num_inputs )
 {
   srand( time( NULL ) );
   for( int i = 0; i < num_inputs + 1; i++ )
   {
-    weights.push_back( rand_clamped() );
+    weights[ i ] = rand_clamped();
   }
-
-  type = func;
 }
 
-Neuron::Neuron( vector< double > &w, Function func )
+template < int TOTAL_INPUTS >
+Neuron< TOTAL_INPUTS >::Neuron( vector< double > &w )
 {
-  for( vector<double>::iterator i = w.begin(); i != w.end(); i++ )
+  for( int i = 0; i < w.size(); i++ )
   {
-    weights.push_back( *i );
+    weights[ i ] = w[ i ];
   }
-
-  type = func;
 }
 
-double Neuron::accumulate_activation( vector< double > inputs )
+template < int TOTAL_INPUTS >
+double Neuron< TOTAL_INPUTS >::accumulate_activation( vector< double > inputs )
 {
-  if( inputs.size() != weights.size() - 1 ) throw new invalid_argument( "Input length doesn't match weight vector length" );
+  if( inputs.size() != TOTAL_INPUTS ) throw new invalid_argument( "Input length doesn't match weight vector length" );
 
   double active = 0;
   int i;
@@ -47,7 +45,8 @@ double Neuron::accumulate_activation( vector< double > inputs )
   return active;
 }
 
-double SigmoidNeuron::sigmoid( double x )
+template < int TOTAL_INPUTS >
+double SigmoidNeuron< TOTAL_INPUTS >::sigmoid( double x )
 {
   double e_pow = 1.0 + pow( E, -x );
   return 1.0 / e_pow;
