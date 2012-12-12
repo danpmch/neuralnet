@@ -19,7 +19,7 @@ void Perceptron< TOTAL_INPUTS >::train( vector< example > &examples, double erro
   cout << "Error threshold: " << error_thresh << endl;
 
   srand( time( NULL ) );
-  while( abs( error( examples ) ) > error_thresh )
+  while( error( examples ) > error_thresh )
   {
     int e = rand() % examples.size();
     cout << "Using example " << e << endl;
@@ -31,6 +31,7 @@ void Perceptron< TOTAL_INPUTS >::train( vector< example > &examples, double erro
 
 }
 
+// total error is always positive
 template < int TOTAL_INPUTS >
 double Perceptron< TOTAL_INPUTS >::error( vector< example > &examples )
 {
@@ -39,7 +40,7 @@ double Perceptron< TOTAL_INPUTS >::error( vector< example > &examples )
   {
     example &current = examples[ e ];
     double a = this->activation( current.inputs );
-    total_error += current.outputs[ 0 ] - a;
+    total_error += abs( current.outputs[ 0 ] - a );
   }
 
   cout << "Total error: " << total_error / examples.size() << endl;
