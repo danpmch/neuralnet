@@ -1,6 +1,7 @@
 #ifndef __NEURON__
 #define __NEURON__
 
+#include <iostream>
 #include <vector>
 using namespace std;
 
@@ -28,10 +29,11 @@ class Neuron
 };
 
 template < int TOTAL_INPUTS >
-class ThresholdNeuron : public Neuron< TOTAL_INPUTS >
+class ThresholdNeuron : public virtual Neuron< TOTAL_INPUTS >
 {
   public:
-    ThresholdNeuron() {}
+
+    ThresholdNeuron() { cout << "Initializing a ThresholdNeuron\n"; }
     ThresholdNeuron( vector< double > &w ) : Neuron< TOTAL_INPUTS >( w ) {}
 
     virtual double activation( vector< double > &inputs ) { return threshold( this->accumulate_activation( inputs ) ); }
@@ -39,10 +41,11 @@ class ThresholdNeuron : public Neuron< TOTAL_INPUTS >
 };
 
 template < int TOTAL_INPUTS >
-class SigmoidNeuron : public Neuron< TOTAL_INPUTS >
+class SigmoidNeuron : public virtual Neuron< TOTAL_INPUTS >
 {
   public:
-    SigmoidNeuron() {}
+
+    SigmoidNeuron() { cout << "Initializing a SigmoidNeuron\n"; }
     SigmoidNeuron( vector< double > &w ) : Neuron< TOTAL_INPUTS >( w ) {}
 
     virtual double activation( vector< double > &inputs ) { return sigmoid( this->accumulate_activation( inputs ) ); }

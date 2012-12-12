@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <cstdlib>
 #include <cmath>
+#include <iostream>
 
 const double E = 2.71828182846;
 
@@ -13,6 +14,7 @@ double rand_clamped()
 template < int TOTAL_INPUTS >
 Neuron< TOTAL_INPUTS >::Neuron()
 {
+  cout << "Executing First Neuron Constructor\n";
   srand( time( NULL ) );
   for( int i = 0; i < TOTAL_INPUTS + 1; i++ )
   {
@@ -23,8 +25,9 @@ Neuron< TOTAL_INPUTS >::Neuron()
 template < int TOTAL_INPUTS >
 Neuron< TOTAL_INPUTS >::Neuron( vector< double > &w )
 {
-  if( w.size() != TOTAL_INPUTS + 1 ) throw new invalid_argument( "Input weight vector isn't the right size" );
-  for( int i = 0; i < w.size(); i++ )
+  cout << "Executing Second Neuron Constructor\n";
+  if( ( int ) w.size() != TOTAL_INPUTS + 1 ) throw new invalid_argument( "Input weight vector isn't the right size" );
+  for( int i = 0; i < ( int ) w.size(); i++ )
   {
     weights[ i ] = w[ i ];
   }
@@ -37,7 +40,7 @@ double Neuron< TOTAL_INPUTS >::accumulate_activation( vector< double > inputs )
 
   double active = 0;
   int i;
-  for( i = 0; i < inputs.size(); i++ )
+  for( i = 0; i < ( int ) inputs.size(); i++ )
   {
     active += weights[ i ] * inputs[ i ];
   }

@@ -18,15 +18,16 @@ void Perceptron< TOTAL_INPUTS >::train( vector< example > &examples, double erro
 {
   cout << "Error threshold: " << error_thresh << endl;
 
+  double iterations = 0.0;
   srand( time( NULL ) );
-  while( error( examples ) > error_thresh )
+  while( iterations++, error( examples ) > error_thresh && iterations < 1000000 )
   {
     int e = rand() % examples.size();
     cout << "Using example " << e << endl;
     example &current = examples[ e ];
     double a = this->activation( current.inputs );
     cout << "Desired: " << current.outputs[ 0 ] << " Actual: " << a << " Error: " << current.outputs[ 0 ] - a << endl;
-    add( current.inputs, current.outputs[ 0 ], a );
+    add( current.inputs, current.outputs[ 0 ], a, alpha_factor( iterations ) );
   }
 
 }
@@ -36,7 +37,7 @@ template < int TOTAL_INPUTS >
 double Perceptron< TOTAL_INPUTS >::error( vector< example > &examples )
 {
   double total_error = 0.0;
-  for( int e = 0; e < examples.size(); e++ )
+  for( int e = 0; e < ( int ) examples.size(); e++ )
   {
     example &current = examples[ e ];
     double a = this->activation( current.inputs );
@@ -53,7 +54,7 @@ void Perceptron< TOTAL_INPUTS >::add( vector< double > &inputs, double desired, 
   double scale = this->scale_factor( desired, actual, alpha );
 
   int i;
-  for( i = 0; i < inputs.size(); i++ )
+  for( i = 0; i < ( int ) inputs.size(); i++ )
   {
     this->get_weights()[ i ] += scale * inputs[ i ];
   }
@@ -62,7 +63,13 @@ void Perceptron< TOTAL_INPUTS >::add( vector< double > &inputs, double desired, 
 }
 
 template < int TOTAL_INPUTS >
-double Perceptron< TOTAL_INPUTS >::scale_factor( double desired_output, double actual_output, double alpha )
+double ThresholdPerceptron< TOTAL_INPUTS >::scale_factor( double desired_output, double actual_output, double alpha )
 {
   return alpha * ( desired_output - actual_output );
+}
+
+template < int TOTAL_INPUTS >
+double SigmoidPerceptron< TOTAL_INPUTS >::scale_factor( double desired_output, double actual_output, double alpha )
+{
+  return alpha * ( desired_output - actual_output ) * actual_output * ( 1.0 - actual_output );
 }

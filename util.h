@@ -10,10 +10,10 @@ template <class T>
 void print_vec( vector< T > &vec )
 {
   cout << "< ";
-  for( int i = 0; i < vec.size(); i++ )
+  for( int i = 0; i < ( int ) vec.size(); i++ )
   {
     cout << vec[ i ];
-    if( i < vec.size() - 1 )
+    if( i < ( int ) vec.size() - 1 )
       cout << ", ";
   }
   cout << " >" << endl;

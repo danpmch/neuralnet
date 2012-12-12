@@ -11,9 +11,9 @@ void load_examples( double *table, int rows, int cols, vector< example > &exampl
     example e;
     for( int col = 0; col < cols - 1; col++ )
     {
-      e.inputs.push_back( table[ row * 3 + col ] );
+      e.inputs.push_back( table[ row * cols + col ] );
     }
-    e.outputs.push_back( table[ row * 3 + cols - 1 ] );
+    e.outputs.push_back( table[ row * cols + cols - 1 ] );
 
     examples.push_back( e );
   }
@@ -21,8 +21,8 @@ void load_examples( double *table, int rows, int cols, vector< example > &exampl
 
 void print_examples( vector< example > &examples )
 {
-  printf( "Examples: %d\n", examples.size() );
-  for( int i = 0; i < examples.size(); i++ )
+  printf( "Examples: %lu\n", examples.size() );
+  for( int i = 0; i < ( int ) examples.size(); i++ )
   {
     cout << "Example " << i << endl;
     cout << "  Inputs: "; print_vec( examples[ i ].inputs );
@@ -34,13 +34,25 @@ template <int S>
 void print_results( vector< example > &examples, Perceptron<S> &p )
 {
   cout << "Results:\n";
-  for( int i = 0; i < examples.size(); i++ )
+  for( int i = 0; i < ( int ) examples.size(); i++ )
   {
     cout << "Example " << i << endl;
     cout << "  Inputs: "; print_vec( examples[ i ].inputs );
     cout << "  Output: " << p.activation( examples[ i ].inputs ) << endl;
   }
 
+}
+
+template < int S >
+void test_function( Perceptron< S > &p, double *table, int rows, int cols, double err_thresh = 0.0 )
+{
+  vector< example > examples;
+  load_examples( table, rows, cols, examples);
+  print_examples( examples);
+
+  p.train( examples, err_thresh );
+  cout << "Final perceptron weights: "; print_arr( p.get_weights(), p.total_weights() );
+  print_results( examples, p );
 }
 
 int main()
@@ -55,35 +67,66 @@ int main()
                                1, 0, 1,
                                1, 1, 1 };
 
-  vector< example > examples_2input;
-  load_examples( and_truth_table, 4, 3, examples_2input );
-  print_examples( examples_2input );
+  double not_truth_table[] = { 0, 1,
+                               1, 0 };
+
+  double xor_truth_table[] = { 0, 0, 0,
+                               0, 1, 1,
+                               1, 0, 1,
+                               1, 1, 0 };
+
+  vector< example > examples;
+  load_examples( and_truth_table, 4, 3, examples);
+  print_examples( examples);
 
   vector< double > correct_weights;
   correct_weights.push_back( 1.0 );
   correct_weights.push_back( 1.0 );
   correct_weights.push_back( 2.0 );
-  Perceptron<2> p_correct;
+  ThresholdPerceptron<2> p_correct( correct_weights );
+  cout << "Correct weights: "; print_arr( p_correct.get_weights(), p_correct.total_weights() );
 
-  print_results( examples_2input, p_correct );
+  print_results( examples, p_correct );
 
-  Perceptron<2> p_and;
+  ThresholdPerceptron<2> p_and;
+  cout << "Original weights: "; print_arr( p_and.get_weights(), 3 );
   cout << "Training perceptron. Hold onto your butts...\n";
-  p_and.train( examples_2input );
+  p_and.train( examples);
   cout << "Final perceptron weights: "; print_arr( p_and.get_weights(), 3 );
   cout << endl;
 
-  print_results( examples_2input, p_and );
-  examples_2input.clear();
+  print_results( examples, p_and );
+  examples.clear();
 
   cout << "Training perceptron for OR:\n";
-  load_examples( or_truth_table, 4, 3, examples_2input );
-  print_examples( examples_2input );
+  ThresholdPerceptron< 2 > p_or;
+  test_function( p_or, or_truth_table, 4, 3 );
 
-  Perceptron<2> p_or;
-  p_or.train( examples_2input );
-  cout << "Final perceptron weights: "; print_arr( p_or.get_weights(), 3 );
-  print_results( examples_2input, p_or);
+  /*
+  cout << "Training a SigmoidPerceptron for OR:\n";
+  SigmoidPerceptron<2> sig_or;
+  sig_or.train( examples, 0.003 );
+  cout << "Final perceptron weights: "; print_arr( sig_or.get_weights(), sig_or.total_weights() );
+  print_results( examples, sig_or );
+  */
+
+  cout << "Training ThresholdPerceptron for NOT:\n";
+  examples.clear();
+  load_examples( not_truth_table, 2, 2, examples );
+  print_examples( examples );
+  ThresholdPerceptron<1> p_not;
+  p_not.train( examples );
+  cout << "Final perceptron weights: "; print_arr( p_not.get_weights(), p_not.total_weights() );
+  print_results( examples, p_not );
+
+  /*
+  cout << "Training a SigmoidPerceptron for NOT:\n";
+  SigmoidPerceptron<1> sig_or;
+  sig_or.train( examples, 0.003 );
+  cout << "Final perceptron weights: "; print_arr( sig_or.get_weights(), sig_or.total_weights() );
+  print_results( examples, sig_or );
+  */
+
 
   return 0;
 }
