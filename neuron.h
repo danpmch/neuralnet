@@ -13,6 +13,7 @@ class Neuron
     Neuron( vector< double > &w );
 
     double * get_weights() { return weights; }
+    int total_weights() { return TOTAL_INPUTS + 1; }
 
     virtual double activation( vector< double > &inputs ) = 0;
 
