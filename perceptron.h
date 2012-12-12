@@ -28,6 +28,6 @@ class Perceptron : public ThresholdNeuron< TOTAL_INPUTS >
 
 };
 
-#include "perceptron.cpp"
+#include "perceptron.inl"
 
 #endif

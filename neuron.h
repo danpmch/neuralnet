@@ -48,6 +48,6 @@ class SigmoidNeuron : public Neuron< TOTAL_INPUTS >
     double sigmoid( double x );
 };
 
-#include "neuron.cpp"
+#include "neuron.inl"
 
 #endif
