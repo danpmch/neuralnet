@@ -53,6 +53,7 @@ void test_function( Perceptron< S > &p, double *table, int rows, int cols, doubl
   p.train( examples, err_thresh );
   cout << "Final perceptron weights: "; print_arr( p.get_weights(), p.total_weights() );
   print_results( examples, p );
+  cout << endl;
 }
 
 int main()
@@ -75,6 +76,15 @@ int main()
                                1, 0, 1,
                                1, 1, 0 };
 
+  double marjoity_table[] = { 0, 0, 0, 0,
+                              0, 0, 1, 0,
+                              0, 1, 0, 0,
+                              0, 1, 1, 1,
+                              1, 0, 0, 0,
+                              1, 0, 1, 1,
+                              1, 1, 0, 1,
+                              1, 1, 1, 1 };
+
   vector< example > examples;
   load_examples( and_truth_table, 4, 3, examples);
   print_examples( examples);
@@ -85,48 +95,49 @@ int main()
   correct_weights.push_back( 2.0 );
   ThresholdPerceptron<2> p_correct( correct_weights );
   cout << "Correct weights: "; print_arr( p_correct.get_weights(), p_correct.total_weights() );
-
   print_results( examples, p_correct );
-
-  ThresholdPerceptron<2> p_and;
-  cout << "Original weights: "; print_arr( p_and.get_weights(), 3 );
-  cout << "Training perceptron. Hold onto your butts...\n";
-  p_and.train( examples);
-  cout << "Final perceptron weights: "; print_arr( p_and.get_weights(), 3 );
   cout << endl;
 
-  print_results( examples, p_and );
-  examples.clear();
+  cout << "Training a ThresholdPerceptron for AND:\n";
+  ThresholdPerceptron<2> p_and;
+  cout << "Original weights: "; print_arr( p_and.get_weights(), 3 );
+  test_function( p_and, and_truth_table, 4, 3 );
 
-  cout << "Training perceptron for OR:\n";
+  cout << "Training a ThresholdPerceptron for OR:\n";
   ThresholdPerceptron< 2 > p_or;
   test_function( p_or, or_truth_table, 4, 3 );
 
   /*
   cout << "Training a SigmoidPerceptron for OR:\n";
   SigmoidPerceptron<2> sig_or;
-  sig_or.train( examples, 0.003 );
-  cout << "Final perceptron weights: "; print_arr( sig_or.get_weights(), sig_or.total_weights() );
-  print_results( examples, sig_or );
+  test_function( sig_or, or_truth_table, 4, 3, 0.003 );
   */
 
   cout << "Training ThresholdPerceptron for NOT:\n";
-  examples.clear();
-  load_examples( not_truth_table, 2, 2, examples );
-  print_examples( examples );
-  ThresholdPerceptron<1> p_not;
-  p_not.train( examples );
-  cout << "Final perceptron weights: "; print_arr( p_not.get_weights(), p_not.total_weights() );
-  print_results( examples, p_not );
+  ThresholdPerceptron< 1 > p_not;
+  test_function( p_not, not_truth_table, 2, 2 );
 
   /*
   cout << "Training a SigmoidPerceptron for NOT:\n";
   SigmoidPerceptron<1> sig_or;
-  sig_or.train( examples, 0.003 );
-  cout << "Final perceptron weights: "; print_arr( sig_or.get_weights(), sig_or.total_weights() );
-  print_results( examples, sig_or );
+  test_function( sig_or, not_truth_table, 2, 2, 0.003 );
   */
 
+  /*
+  cout << "Training a ThresholdPerceptron for XOR:\n";
+  ThresholdPerceptron< 2 > p_xor;
+  test_function( p_xor, xor_truth_table, 4, 3, 0.2 );
+  */
+
+  /*
+  cout << "Training a SigmoidPerceptron for XOR:\n";
+  SigmoidPerceptron< 2 > s_xor;
+  test_function( s_xor, xor_truth_table, 4, 3, 0.253 );
+  */
+
+  cout << "Training a ThresholdPerceptron for Majority function of 3 inputs:\n";
+  ThresholdPerceptron< 3 > p_maj;
+  test_function( p_maj, marjoity_table, 8, 4 );
 
   return 0;
 }
