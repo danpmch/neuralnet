@@ -24,7 +24,9 @@ class Perceptron : public ThresholdNeuron< TOTAL_INPUTS >
 
   private:
 
-    void add( vector< double > &inputs, double scale );
+    void add( vector< double > &inputs, double desired, double actual, double alpha = 1.0 );
+
+    double scale_factor( double desired_output, double actual_output, double alpha = 1.0 );
 
 };
 

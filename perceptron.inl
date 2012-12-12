@@ -26,7 +26,7 @@ void Perceptron< TOTAL_INPUTS >::train( vector< example > &examples, double erro
     example &current = examples[ e ];
     double a = this->activation( current.inputs );
     cout << "Desired: " << current.outputs[ 0 ] << " Actual: " << a << " Error: " << current.outputs[ 0 ] - a << endl;
-    add( current.inputs, current.outputs[ 0 ] - a );
+    add( current.inputs, current.outputs[ 0 ], a );
   }
 
 }
@@ -48,8 +48,10 @@ double Perceptron< TOTAL_INPUTS >::error( vector< example > &examples )
 }
 
 template < int TOTAL_INPUTS >
-void Perceptron< TOTAL_INPUTS >::add( vector< double > &inputs, double scale )
+void Perceptron< TOTAL_INPUTS >::add( vector< double > &inputs, double desired, double actual, double alpha )
 {
+  double scale = this->scale_factor( desired, actual, alpha );
+
   int i;
   for( i = 0; i < inputs.size(); i++ )
   {
@@ -57,4 +59,10 @@ void Perceptron< TOTAL_INPUTS >::add( vector< double > &inputs, double scale )
   }
 
   this->get_weights()[ i ] += scale;
+}
+
+template < int TOTAL_INPUTS >
+double Perceptron< TOTAL_INPUTS >::scale_factor( double desired_output, double actual_output, double alpha )
+{
+  return alpha * ( desired_output - actual_output );
 }
