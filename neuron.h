@@ -5,16 +5,22 @@
 #include <vector>
 using namespace std;
 
-template < int TOTAL_INPUTS >
+struct example
+{
+  vector< double > inputs;
+  vector< double > outputs;
+};
+
 class Neuron
 {
   public:
 
-    Neuron();
+    Neuron( int num_inputs );
     Neuron( vector< double > &w );
 
-    double * get_weights() { return weights; }
-    int total_weights() { return TOTAL_INPUTS + 1; }
+    vector< double > & get_weights() { return weights; }
+    void set_weights( vector< double > &w ) { weights = w; }
+    double & operator[]( int i ) { return weights[ i ]; }
 
     virtual double activation( vector< double > &inputs ) = 0;
 
@@ -24,34 +30,30 @@ class Neuron
 
   private:
 
-    double weights[ TOTAL_INPUTS ];
+    vector< double > weights;
 
 };
 
-template < int TOTAL_INPUTS >
-class ThresholdNeuron : public virtual Neuron< TOTAL_INPUTS >
+class ThresholdNeuron : public Neuron
 {
   public:
 
-    ThresholdNeuron() { cout << "Initializing a ThresholdNeuron\n"; }
-    ThresholdNeuron( vector< double > &w ) : Neuron< TOTAL_INPUTS >( w ) {}
+    ThresholdNeuron( int num_inputs ) : Neuron( num_inputs ) { cout << "Initializing a ThresholdNeuron\n"; }
+    ThresholdNeuron( vector< double > &w ) : Neuron( w ) {}
 
     virtual double activation( vector< double > &inputs ) { return threshold( this->accumulate_activation( inputs ) ); }
     inline double threshold( double x ) { if( x >= 0 ) return 1.0; else return 0.0; };
 };
 
-template < int TOTAL_INPUTS >
-class SigmoidNeuron : public virtual Neuron< TOTAL_INPUTS >
+class SigmoidNeuron : public Neuron
 {
   public:
 
-    SigmoidNeuron() { cout << "Initializing a SigmoidNeuron\n"; }
-    SigmoidNeuron( vector< double > &w ) : Neuron< TOTAL_INPUTS >( w ) {}
+    SigmoidNeuron( int num_inputs ) : Neuron( num_inputs ) { cout << "Initializing a SigmoidNeuron\n"; }
+    SigmoidNeuron( vector< double > &w ) : Neuron( w ) {}
 
     virtual double activation( vector< double > &inputs ) { return sigmoid( this->accumulate_activation( inputs ) ); }
     double sigmoid( double x );
 };
-
-#include "neuron.inl"
 
 #endif

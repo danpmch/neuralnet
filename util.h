@@ -16,7 +16,7 @@ void print_vec( vector< T > &vec )
     if( i < ( int ) vec.size() - 1 )
       cout << ", ";
   }
-  cout << " >" << endl;
+  cout << " >";
 }
 
 template <class T>
@@ -29,7 +29,36 @@ void print_arr( T * arr, int size )
     if( i < size - 1 )
       cout << ", ";
   }
-  cout << " >" << endl;
+  cout << " >";
+}
+
+template <class T>
+void prod( vector< T > &v1, const vector< T > &v2 )
+{
+  unsigned long min = v1.size() < v2.size ? v1.size() : v2.size();
+  for( unsigned long i = 0; i < min; i++ )
+  {
+    v1[ i ] *= v2[ i ];
+  }
+}
+
+template <class T>
+void add( vector< T > &v1, const vector< T > &v2 )
+{
+  unsigned long min = v1.size() < v2.size ? v1.size() : v2.size();
+  for( unsigned long i = 0; i < min; i++ )
+  {
+    v1[ i ] += v2[ i ];
+  }
+}
+
+template <class T>
+void scale( vector< T > &v1, double s )
+{
+  for( unsigned long i = 0; i < v1.size(); i++ )
+  {
+    v1[ i ] *= s;
+  }
 }
 
 
