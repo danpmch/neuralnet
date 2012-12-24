@@ -29,9 +29,9 @@ int main()
   and_weights.push_back( 10.984 );
   and_weights.push_back( -16.5618 );
 
-  net.set_neuron( 0, 0, or_weights );
-  net.set_neuron( 0, 1, nor_weights );
-  net.set_neuron( 1, 0, and_weights );
+  net[ 0 ][ 0 ] = or_weights;
+  net[ 0 ][ 1 ] = nor_weights;
+  net[ 1 ][ 0 ] = and_weights;
 
   net.print_net();
 

@@ -19,6 +19,8 @@ class NeuralNetwork
 
     void set_neuron( int layer, int neuron, vector< double > &w );
 
+    vector< SigmoidNeuron > & operator[]( int layer_index ) { return network[ layer_index ]; }
+
   private:
 
     vector< double > in_j( vector< SigmoidNeuron > &layer, vector< double > &inputs );
