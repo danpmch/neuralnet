@@ -116,7 +116,7 @@ vector< double > NeuralNetwork::in_j( vector< SigmoidNeuron > &layer, vector< do
     SigmoidNeuron &n = layer[ neuron ];
 
     double in_n = 0.0;
-    for( unsigned long w = 0; w < n.get_weights().size(); w++ )
+    for( unsigned long w = 0; w < n.size(); w++ )
     {
       in_n += n[ w ] * inputs[ w ];
     }
@@ -130,7 +130,7 @@ vector< double > NeuralNetwork::in_j( vector< SigmoidNeuron > &layer, vector< do
 void NeuralNetwork::update_neuron( SigmoidNeuron &n, vector< double > &inputs, double output, double delta, double alpha )
 {
   double scale = alpha * output * delta;
-  for( unsigned long i = 0; i < n.get_weights().size(); i++ )
+  for( unsigned long i = 0; i < n.size(); i++ )
   {
     n[ i ] += scale * inputs[ i ];
   }
@@ -149,7 +149,7 @@ double NeuralNetwork::error( vector< example > &examples )
 
 void NeuralNetwork::set_neuron( int layer, int neuron, vector< double > &w )
 {
-  network[ layer ][ neuron ].set_weights( w );
+  network[ layer ][ neuron ] = w;
 }
 
 void NeuralNetwork::print_net()
@@ -159,7 +159,7 @@ void NeuralNetwork::print_net()
     cout << layer << ": [ ";
     for( int neuron = 0; neuron < ( int ) network[ layer ].size(); neuron++ )
     {
-      print_vec( network[ layer ][ neuron ].get_weights() );
+      print_vec( network[ layer ][ neuron ] );
     }
     cout << "]\n";
   }

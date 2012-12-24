@@ -25,8 +25,8 @@ void print_examples( vector< example > &examples )
   for( int i = 0; i < ( int ) examples.size(); i++ )
   {
     cout << "Example " << i << endl;
-    cout << "  Inputs: "; print_vec( examples[ i ].inputs );
-    cout << "  Output: "; print_vec( examples[ i ].outputs );
+    cout << "  Inputs: "; print_vec( examples[ i ].inputs ); cout << endl;
+    cout << "  Output: "; print_vec( examples[ i ].outputs ); cout << endl;
   }
 }
 
@@ -37,7 +37,7 @@ void print_results( vector< example > &examples, P &p )
   for( int i = 0; i < ( int ) examples.size(); i++ )
   {
     cout << "Example " << i << endl;
-    cout << "  Inputs: "; print_vec( examples[ i ].inputs );
+    cout << "  Inputs: "; print_vec( examples[ i ].inputs ); cout << endl;
     cout << "  Output: " << p.activation( examples[ i ].inputs ) << endl;
   }
 
@@ -51,7 +51,7 @@ void test_function( P &p, double *table, int rows, int cols, double err_thresh =
   print_examples( examples);
 
   p.train( examples, err_thresh );
-  cout << "Final perceptron weights: "; print_vec( p.get_weights() );
+  cout << "Final perceptron weights: "; print_vec( p ); cout << endl;
   print_results( examples, p );
   cout << endl;
 }
@@ -100,7 +100,7 @@ int main()
   correct_weights.push_back( 1.0 );
   correct_weights.push_back( 2.0 );
   ThresholdPerceptron p_correct( correct_weights );
-  cout << "Correct weights: "; print_vec( p_correct.get_weights() );
+  cout << "Correct weights: "; print_vec( p_correct ); cout << endl;
   print_results( examples, p_correct );
   cout << endl;
   */
@@ -108,13 +108,13 @@ int main()
   /*
   cout << "Training a ThresholdPerceptron for AND:\n";
   ThresholdPerceptron p_and( 2 );
-  cout << "Original weights: "; print_vec( p_and.get_weights() );
+  cout << "Original weights: "; print_vec( p_and ); cout << endl;
   test_function( p_and, and_truth_table, 4, 3 );
   */
 
   cout << "Training a SigmoidPerceptron for AND:\n";
   SigmoidPerceptron p_and( 2 );
-  cout << "Original weights: "; print_vec( p_and.get_weights() );
+  cout << "Original weights: "; print_vec( p_and ); cout << endl;
   test_function( p_and, and_truth_table, 4, 3, 0.003 );
 
   /*

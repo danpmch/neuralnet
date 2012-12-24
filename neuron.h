@@ -11,27 +11,15 @@ struct example
   vector< double > outputs;
 };
 
-class Neuron
+class Neuron : public vector< double >
 {
   public:
 
     Neuron( int num_inputs );
-    Neuron( vector< double > &w );
-
-    vector< double > & get_weights() { return weights; }
-    void set_weights( vector< double > &w ) { weights = w; }
-    double & operator[]( int i ) { return weights[ i ]; }
-
-    virtual double activation( vector< double > &inputs ) = 0;
-
-  protected:
+    Neuron( vector< double > &w ) : vector< double >( w ) {}
 
     double accumulate_activation( vector< double > inputs );
-
-  private:
-
-    vector< double > weights;
-
+    virtual double activation( vector< double > &inputs ) = 0;
 };
 
 class ThresholdNeuron : public Neuron
