@@ -1,6 +1,6 @@
 
 network_test:
-	g++ neuron.h neuralnetwork.cpp network_test.cpp -o network_test -g -Wall -Wextra
+	g++ neuron.cpp neuralnetwork.cpp network_test.cpp -o network_test -g -Wall -Wextra
 
 
 perceptron_test:

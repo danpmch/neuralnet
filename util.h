@@ -35,7 +35,7 @@ void print_arr( T * arr, int size )
 template <class T>
 void prod( vector< T > &v1, const vector< T > &v2 )
 {
-  unsigned long min = v1.size() < v2.size ? v1.size() : v2.size();
+  unsigned long min = v1.size() < v2.size() ? v1.size() : v2.size();
   for( unsigned long i = 0; i < min; i++ )
   {
     v1[ i ] *= v2[ i ];
@@ -45,7 +45,7 @@ void prod( vector< T > &v1, const vector< T > &v2 )
 template <class T>
 void add( vector< T > &v1, const vector< T > &v2 )
 {
-  unsigned long min = v1.size() < v2.size ? v1.size() : v2.size();
+  unsigned long min = v1.size() < v2.size() ? v1.size() : v2.size();
   for( unsigned long i = 0; i < min; i++ )
   {
     v1[ i ] += v2[ i ];

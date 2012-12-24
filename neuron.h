@@ -38,7 +38,7 @@ class ThresholdNeuron : public Neuron
 {
   public:
 
-    ThresholdNeuron( int num_inputs ) : Neuron( num_inputs ) { cout << "Initializing a ThresholdNeuron\n"; }
+    ThresholdNeuron( int num_inputs ) : Neuron( num_inputs ) {  }
     ThresholdNeuron( vector< double > &w ) : Neuron( w ) {}
 
     virtual double activation( vector< double > &inputs ) { return threshold( this->accumulate_activation( inputs ) ); }
@@ -49,7 +49,7 @@ class SigmoidNeuron : public Neuron
 {
   public:
 
-    SigmoidNeuron( int num_inputs ) : Neuron( num_inputs ) { cout << "Initializing a SigmoidNeuron\n"; }
+    SigmoidNeuron( int num_inputs ) : Neuron( num_inputs ) {  }
     SigmoidNeuron( vector< double > &w ) : Neuron( w ) {}
 
     virtual double activation( vector< double > &inputs ) { return sigmoid( this->accumulate_activation( inputs ) ); }

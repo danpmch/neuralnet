@@ -81,8 +81,8 @@ void NeuralNetwork::train( vector< example > &examples, double error_thresh )
     scale( error, -1 );
     add( error, e.outputs );
 
-    vector< double > &in_k = in_j( network[ network.size() - 1 ], inputs[ inputs.size() - 2 ] );
-    vector< double > &delta_k = dsigmoid( in_k );
+    vector< double > in_k = in_j( network[ network.size() - 1 ], inputs[ inputs.size() - 2 ] );
+    vector< double > delta_k = dsigmoid( in_k );
     prod( delta_k, error );
     
     backpropagate( inputs, delta_k );
@@ -91,19 +91,19 @@ void NeuralNetwork::train( vector< example > &examples, double error_thresh )
 
 void NeuralNetwork::backpropagate( vector< vector< double > > &inputs, vector< double > delta_j )
 {
-  for( unsigned long layer = network.size() - 1; layer >= 0; layer-- )
+  for( long layer = ( long ) network.size() - 1; layer >= 0; layer-- )
   {
-    vector< SigmoidNeuron > &layer = network[ layer ];
+    vector< SigmoidNeuron > &current_layer = network[ layer ];
     vector< double > &layer_inputs = inputs[ layer ];
     vector< double > &layer_outputs = inputs[ layer + 1 ];
 
-    vector< double > &layer_in = in_j( layer, inputs );
-    vector< double > &dlayer_in = dsigmoid( layer_in );
+    vector< double > layer_in = in_j( current_layer, layer_inputs );
+    vector< double > dlayer_in = dsigmoid( layer_in );
 
-    for( unsigned long neuron = 0; neuron < layer.size(); neuron++ )
+    for( unsigned long neuron = 0; neuron < current_layer.size(); neuron++ )
     {
       double neuron_output = layer_outputs[ neuron ];
-      update_neuron( layer[ neuron ], layer_inputs, neuron_output, delta_j[ neuron ] );
+      update_neuron( current_layer[ neuron ], layer_inputs, neuron_output, delta_j[ neuron ] );
     }
   }
 }
@@ -127,7 +127,7 @@ vector< double > NeuralNetwork::in_j( vector< SigmoidNeuron > &layer, vector< do
   return in;
 }
 
-void NeuralNetwork::update_neuron( SigmoidNeuron &n, vector< double > &inputs, double output, double delta, double alpha = 1.0 );
+void NeuralNetwork::update_neuron( SigmoidNeuron &n, vector< double > &inputs, double output, double delta, double alpha )
 {
   double scale = alpha * output * delta;
   for( unsigned long i = 0; i < n.get_weights().size(); i++ )

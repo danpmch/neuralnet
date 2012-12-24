@@ -15,7 +15,6 @@ double rand_clamped()
 
 Neuron::Neuron( int num_inputs )
 {
-  cout << "Executing First Neuron Constructor\n";
   srand( time( NULL ) );
   for( int i = 0; i < num_inputs + 1; i++ )
   {
@@ -25,7 +24,6 @@ Neuron::Neuron( int num_inputs )
 
 Neuron::Neuron( vector< double > &w )
 {
-  cout << "Executing Second Neuron Constructor\n";
   set_weights( w );
 }
 
