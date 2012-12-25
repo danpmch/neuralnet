@@ -109,6 +109,9 @@ void NeuralNetwork::backpropagate( vector< vector< double > > &inputs, vector< d
       update_neuron( current_layer[ neuron ], layer_inputs, neuron_output, delta_j[ neuron ] );
     }
 
+    // skip backpropagation if at last layer
+    if( layer == 0 ) continue;
+
     // backpropagate the delta values for the next layer
     vector< double > next_layer_in = in_j( network[ layer - 1 ], inputs[ layer - 1 ] );
     vector< double > next_layer_din = dsigmoid( next_layer_in );

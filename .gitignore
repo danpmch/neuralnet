@@ -4,3 +4,5 @@
 *.swo
 tags
 perceptron_test
+network_test
+output
