@@ -42,7 +42,12 @@ int main()
       vector< double > inputs;
       inputs.push_back( first );
       inputs.push_back( second );
-      vector< double > result = net.compute( inputs );
+
+      vector< vector< double > > compute_record;
+      compute_record.push_back( inputs );
+      net.full_compute( compute_record );
+
+      vector< double > result = compute_record[ compute_record.size() - 1 ];
       print_vec( inputs ); cout << ": "; print_vec( result ); cout << endl;
     }
   }

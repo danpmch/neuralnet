@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <cmath>
 
 vector< double > dsigmoid( vector< double > &x )
 {
@@ -70,22 +71,26 @@ void NeuralNetwork::train( vector< example > &examples, double error_thresh )
   srand( time( NULL ) );
   while( error( examples ) > error_thresh )
   {
-    example &e = examples[ rand() % examples.size() ];
+//    example &e = examples[ rand() % examples.size() ];
 
-    // compute error vector correct_output - actual_output
-    vector< vector< double > > inputs;
-    inputs.push_back( e.inputs );
-    full_compute( inputs );
+    for( vector< example >::iterator e = examples.begin(); e != examples.end(); e++ )
+    {
 
-    vector< double > error = inputs[ inputs.size() - 1 ];
-    scale( error, -1 );
-    add( error, e.outputs );
+      // compute error vector correct_output - actual_output
+      vector< vector< double > > inputs;
+      inputs.push_back( e->inputs );
+      full_compute( inputs );
 
-    vector< double > in_k = in_j( network[ network.size() - 1 ], inputs[ inputs.size() - 2 ] );
-    vector< double > delta_k = dsigmoid( in_k );
-    prod( delta_k, error );
-    
-    backpropagate( inputs, delta_k );
+      vector< double > error = inputs[ inputs.size() - 1 ];
+      scale( error, -1 );
+      add( error, e->outputs );
+
+      vector< double > in_k = in_j( network[ network.size() - 1 ], inputs[ inputs.size() - 2 ] );
+      vector< double > delta_k = dsigmoid( in_k );
+      prod( delta_k, error );
+      
+      backpropagate( inputs, delta_k );
+    }
   }
 }
 
@@ -97,14 +102,28 @@ void NeuralNetwork::backpropagate( vector< vector< double > > &inputs, vector< d
     vector< double > &layer_inputs = inputs[ layer ];
     vector< double > &layer_outputs = inputs[ layer + 1 ];
 
-    vector< double > layer_in = in_j( current_layer, layer_inputs );
-    vector< double > dlayer_in = dsigmoid( layer_in );
-
+    // update the neurons in the current layer based on delta values and inputs
     for( unsigned long neuron = 0; neuron < current_layer.size(); neuron++ )
     {
       double neuron_output = layer_outputs[ neuron ];
       update_neuron( current_layer[ neuron ], layer_inputs, neuron_output, delta_j[ neuron ] );
     }
+
+    // backpropagate the delta values for the next layer
+    vector< double > next_layer_in = in_j( network[ layer - 1 ], inputs[ layer - 1 ] );
+    vector< double > next_layer_din = dsigmoid( next_layer_in );
+    vector< double > new_deltas;
+    for( unsigned long next_layer_neuron_index = 0; next_layer_neuron_index < network[ layer - 1 ].size(); next_layer_neuron_index++ )
+    {
+      new_deltas.push_back( 0.0 );
+      for( unsigned long current_layer_neuron_index = 0; current_layer_neuron_index < current_layer.size(); current_layer_neuron_index++ )
+      {
+        new_deltas[ next_layer_neuron_index ] += current_layer[ current_layer_neuron_index ][ next_layer_neuron_index ] * delta_j[ current_layer_neuron_index ];
+      }
+      new_deltas[ next_layer_neuron_index ] *= next_layer_din[ next_layer_neuron_index ];
+    }
+    delta_j = new_deltas;
+
   }
 }
 
@@ -114,14 +133,7 @@ vector< double > NeuralNetwork::in_j( vector< SigmoidNeuron > &layer, vector< do
   for( unsigned long neuron = 0; neuron < layer.size(); neuron++ )
   {
     SigmoidNeuron &n = layer[ neuron ];
-
-    double in_n = 0.0;
-    for( unsigned long w = 0; w < n.size(); w++ )
-    {
-      in_n += n[ w ] * inputs[ w ];
-    }
-
-    in.push_back( in_n );
+    in.push_back( n.accumulate_activation( inputs ) );
   }
 
   return in;
@@ -136,12 +148,20 @@ void NeuralNetwork::update_neuron( SigmoidNeuron &n, vector< double > &inputs, d
   }
 }
 
+// comptutes the total L1 error over all examples
 double NeuralNetwork::error( vector< example > &examples )
 {
   double total_error = 0.0;
   for( vector< example >::iterator e = examples.begin(); e != examples.end(); e++ )
   {
-    // TODO: figure out how to define error
+    vector< double > error_vec = compute( e->inputs );
+    scale( error_vec, -1 );
+    add( error_vec, e->outputs );
+
+    for( unsigned long i = 0; i < error_vec.size(); i++ )
+    {
+      total_error += abs( error_vec[ i ] );
+    }
   }
 
   return total_error;
