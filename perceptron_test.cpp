@@ -1,5 +1,5 @@
 #include <cstdio>
-#include "perceptron.h"
+#include "neuron.h"
 #include "util.h"
 #include <iostream>
 using namespace std;
@@ -30,8 +30,7 @@ void print_examples( vector< example > &examples )
   }
 }
 
-template < class P >
-void print_results( vector< example > &examples, P &p )
+void print_results( vector< example > &examples, Neuron &p )
 {
   cout << "Results:\n";
   for( int i = 0; i < ( int ) examples.size(); i++ )
@@ -43,8 +42,7 @@ void print_results( vector< example > &examples, P &p )
 
 }
 
-template < class P >
-void test_function( P &p, double *table, int rows, int cols, double err_thresh = 0.0 )
+void test_function( Neuron &p, double *table, int rows, int cols, double err_thresh = 0.0 )
 {
   vector< example > examples;
   load_examples( table, rows, cols, examples);
@@ -113,7 +111,7 @@ int main()
   */
 
   cout << "Training a SigmoidPerceptron for AND:\n";
-  SigmoidPerceptron p_and( 2 );
+  SigmoidNeuron p_and( 2, true );
   cout << "Original weights: "; print_vec( p_and ); cout << endl;
   test_function( p_and, and_truth_table, 4, 3, 0.003 );
 
@@ -124,11 +122,11 @@ int main()
   */
 
   cout << "Training a SigmoidPerceptron for OR:\n";
-  SigmoidPerceptron s_or( 2 );
+  SigmoidNeuron s_or( 2, true );
   test_function( s_or, or_truth_table, 4, 3, 0.003 );
 
   cout << "Training a SigmoidPerceptron for NOR:\n";
-  SigmoidPerceptron s_nor( 2 );
+  SigmoidNeuron s_nor( 2, true );
   test_function( s_nor, nor_truth_table, 4, 3, 0.003 );
 
   /*

@@ -5,17 +5,6 @@
 #include <iostream>
 #include <cmath>
 
-vector< double > dsigmoid( vector< double > &x )
-{
-  vector< double > deriv;
-  for( unsigned long i = 0; i < x.size(); i++ )
-  {
-    deriv.push_back( x[ i ] * ( 1.0 - x[ i ] ) );
-  }
-
-  return deriv;
-}
-
 NeuralNetwork::NeuralNetwork( int total_inputs, vector< int > &structure )
 {
   for( int layer = 0; layer < ( int ) structure.size(); layer++ )
@@ -69,7 +58,9 @@ void NeuralNetwork::full_compute( vector< vector< double > > &inputs )
 void NeuralNetwork::train( vector< example > &examples, double error_thresh )
 {
   srand( time( NULL ) );
-  while( error( examples ) > error_thresh )
+
+  double total_error = error_thresh + 10.0;
+  while( total_error > error_thresh )
   {
 //    example &e = examples[ rand() % examples.size() ];
 
@@ -85,16 +76,21 @@ void NeuralNetwork::train( vector< example > &examples, double error_thresh )
       scale( error, -1 );
       add( error, e->outputs );
 
-      vector< double > in_k = in_j( network[ network.size() - 1 ], inputs[ inputs.size() - 2 ] );
-      vector< double > delta_k = dsigmoid( in_k );
-      prod( delta_k, error );
-      
-      backpropagate( inputs, delta_k );
+      backpropagate( inputs, error );
+      cout << "Inputs: "; print_vec( e->inputs ); cout << " Desired: "; print_vec( e->outputs ); cout << " Actual: "; print_vec( inputs[ inputs.size() - 1 ] ); 
+      cout << " Error vec: "; print_vec( error ); cout << endl;
+
+      print_net();
+      cout << endl;
     }
+
+    total_error = error( examples );
+    cout << " Total error: " << total_error << "\n";
   }
+//    cout << " Total error: " << total_error << "\n";
 }
 
-void NeuralNetwork::backpropagate( vector< vector< double > > &inputs, vector< double > delta_j )
+void NeuralNetwork::backpropagate( vector< vector< double > > &inputs, vector< double > err )
 {
   for( long layer = ( long ) network.size() - 1; layer >= 0; layer-- )
   {
@@ -106,48 +102,26 @@ void NeuralNetwork::backpropagate( vector< vector< double > > &inputs, vector< d
     for( unsigned long neuron = 0; neuron < current_layer.size(); neuron++ )
     {
       double neuron_output = layer_outputs[ neuron ];
-      update_neuron( current_layer[ neuron ], layer_inputs, neuron_output, delta_j[ neuron ] );
+      current_layer[ neuron ].update( layer_inputs, neuron_output, err[ neuron ] );
     }
 
     // skip backpropagation if at last layer
     if( layer == 0 ) continue;
 
     // backpropagate the delta values for the next layer
-    vector< double > next_layer_in = in_j( network[ layer - 1 ], inputs[ layer - 1 ] );
-    vector< double > next_layer_din = dsigmoid( next_layer_in );
-    vector< double > new_deltas;
+    vector< double > new_err;
     for( unsigned long next_layer_neuron_index = 0; next_layer_neuron_index < network[ layer - 1 ].size(); next_layer_neuron_index++ )
     {
-      new_deltas.push_back( 0.0 );
+      new_err.push_back( 0.0 );
       for( unsigned long current_layer_neuron_index = 0; current_layer_neuron_index < current_layer.size(); current_layer_neuron_index++ )
       {
-        new_deltas[ next_layer_neuron_index ] += current_layer[ current_layer_neuron_index ][ next_layer_neuron_index ] * delta_j[ current_layer_neuron_index ];
+        double a = current_layer[ current_layer_neuron_index ].accumulate_activation( layer_inputs );
+        new_err[ next_layer_neuron_index ] += 
+          current_layer[ current_layer_neuron_index ][ next_layer_neuron_index ] * err[ current_layer_neuron_index ] * SigmoidNeuron::dsigmoid( a );
       }
-      new_deltas[ next_layer_neuron_index ] *= next_layer_din[ next_layer_neuron_index ];
     }
-    delta_j = new_deltas;
+    err = new_err;
 
-  }
-}
-
-vector< double > NeuralNetwork::in_j( vector< SigmoidNeuron > &layer, vector< double > &inputs )
-{
-  vector< double > in;
-  for( unsigned long neuron = 0; neuron < layer.size(); neuron++ )
-  {
-    SigmoidNeuron &n = layer[ neuron ];
-    in.push_back( n.accumulate_activation( inputs ) );
-  }
-
-  return in;
-}
-
-void NeuralNetwork::update_neuron( SigmoidNeuron &n, vector< double > &inputs, double output, double delta, double alpha )
-{
-  double scale = alpha * output * delta;
-  for( unsigned long i = 0; i < n.size(); i++ )
-  {
-    n[ i ] += scale * inputs[ i ];
   }
 }
 
@@ -167,7 +141,7 @@ double NeuralNetwork::error( vector< example > &examples )
     }
   }
 
-  return total_error;
+  return total_error / examples.size();
 }
 
 void NeuralNetwork::set_neuron( int layer, int neuron, vector< double > &w )
