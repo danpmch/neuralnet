@@ -67,60 +67,70 @@ void NeuralNetwork::train( vector< example > &examples, double error_thresh )
     for( vector< example >::iterator e = examples.begin(); e != examples.end(); e++ )
     {
 
-      // compute error vector correct_output - actual_output
+      // compute delta values for the output layer
+
+      // compute error vector
       vector< vector< double > > inputs;
       inputs.push_back( e->inputs );
       full_compute( inputs );
 
-      vector< double > error = inputs[ inputs.size() - 1 ];
-      scale( error, -1 );
-      add( error, e->outputs );
+      vector< double > deltas = inputs[ inputs.size() - 1 ];
+      scale( deltas, -1 );
+      add( deltas, e->outputs );
 
-      backpropagate( inputs, error );
-      cout << "Inputs: "; print_vec( e->inputs ); cout << " Desired: "; print_vec( e->outputs ); cout << " Actual: "; print_vec( inputs[ inputs.size() - 1 ] ); 
-      cout << " Error vec: "; print_vec( error ); cout << endl;
+      // compute derivatives for neuron functions
+      vector< double > da = inputs[ inputs.size() - 1 ];
+      for( unsigned long i = 0; i < da.size(); i++ )
+      {
+        da[ i ] = network[ network.size() - 1 ][ i ].dactivation( da[ i ] );
+      }
 
-      print_net();
-      cout << endl;
+      // multiply error and derivatives to get delta values
+      prod( deltas, da );
+
+      backpropagate( inputs, deltas );
+//      cout << "Inputs: "; print_vec( e->inputs ); cout << " Desired: "; print_vec( e->outputs ); cout << " Actual: "; print_vec( inputs[ inputs.size() - 1 ] ); 
+//      print_vec( deltas ); cout << endl;
+
+//      print_net();
+//      cout << endl;
     }
 
     total_error = error( examples );
-    cout << " Total error: " << total_error << "\n";
+    cout << " Total error: " << total_error << "\r";
   }
+
+  cout << endl;
 //    cout << " Total error: " << total_error << "\n";
 }
 
-void NeuralNetwork::backpropagate( vector< vector< double > > &inputs, vector< double > err )
+void NeuralNetwork::backpropagate( vector< vector< double > > &inputs, vector< double > deltas )
 {
   for( long layer = ( long ) network.size() - 1; layer >= 0; layer-- )
   {
     vector< SigmoidNeuron > &current_layer = network[ layer ];
-    vector< double > &layer_inputs = inputs[ layer ];
-    vector< double > &layer_outputs = inputs[ layer + 1 ];
+    vector< double > &current_layer_inputs = inputs[ layer ];
 
     // update the neurons in the current layer based on delta values and inputs
     for( unsigned long neuron = 0; neuron < current_layer.size(); neuron++ )
     {
-      double neuron_output = layer_outputs[ neuron ];
-      current_layer[ neuron ].update( layer_inputs, neuron_output, err[ neuron ] );
+      current_layer[ neuron ].update( current_layer_inputs, deltas[ neuron ], 0.1 );
     }
 
     // skip backpropagation if at last layer
     if( layer == 0 ) continue;
 
     // backpropagate the delta values for the next layer
-    vector< double > new_err;
-    for( unsigned long next_layer_neuron_index = 0; next_layer_neuron_index < network[ layer - 1 ].size(); next_layer_neuron_index++ )
+    vector< double > new_deltas;
+    vector< SigmoidNeuron > &next_layer = network[ layer - 1 ];
+    for( unsigned long next_layer_neuron_index = 0; next_layer_neuron_index < next_layer.size(); next_layer_neuron_index++ )
     {
-      new_err.push_back( 0.0 );
-      for( unsigned long current_layer_neuron_index = 0; current_layer_neuron_index < current_layer.size(); current_layer_neuron_index++ )
-      {
-        double a = current_layer[ current_layer_neuron_index ].accumulate_activation( layer_inputs );
-        new_err[ next_layer_neuron_index ] += 
-          current_layer[ current_layer_neuron_index ][ next_layer_neuron_index ] * err[ current_layer_neuron_index ] * SigmoidNeuron::dsigmoid( a );
-      }
+      SigmoidNeuron &neuron = next_layer[ next_layer_neuron_index ];
+      double neuron_output = current_layer_inputs[ next_layer_neuron_index ];
+
+      new_deltas.push_back( neuron.compute_delta( neuron_output, current_layer, next_layer_neuron_index, deltas ) );
     }
-    err = new_err;
+    deltas = new_deltas;
 
   }
 }

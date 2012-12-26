@@ -1,7 +1,9 @@
 #include "neuralnetwork.h"
 #include "util.h"
+
 #include <iostream>
 #include <vector>
+#include <cstdlib>
 
 using namespace std;
 
@@ -28,6 +30,11 @@ double xor_truth_table[] = { 0, 0, 0,
                              1, 0, 1,
                              1, 1, 0 };
 
+double xnor_truth_table[] = { 0, 0, 1,
+                              0, 1, 0,
+                              1, 0, 0,
+                              1, 1, 1 };
+
 double marjoity_table[] = { 0, 0, 0, 0,
                             0, 0, 1, 0,
                             0, 1, 0, 0,
@@ -36,6 +43,36 @@ double marjoity_table[] = { 0, 0, 0, 0,
                             1, 0, 1, 1,
                             1, 1, 0, 1,
                             1, 1, 1, 1 };
+
+double reduced_sin_table[] = { 0, 0,
+                               10, 0.173648,
+                               20, 0.342020,
+                               30, 0.5,
+                               40, 0.642788,
+                               50, 0.766044,
+                               60, 0.866025,
+                               70, 0.939693,
+                               80, 0.984808,
+                               90, 1 };
+
+double sin_table[] = { 0, 0,
+                       10, 0.173648,
+                       20, 0.342020,
+                       30, 0.5,
+                       40, 0.642788,
+                       50, 0.766044,
+                       60, 0.866025,
+                       70, 0.939693,
+                       80, 0.984808,
+                       90, 1,
+                       100, 0.984808,
+                       110, 0.939693,
+                       120, 0.866025,
+                       130, 0.766044,
+                       140, 0.642788,
+                       150, 0.5,
+                       160, 0.342020,
+                       170, 0.173648 };
 
 
 void load_examples( double *table, int rows, int cols, vector< example > &examples )
@@ -77,7 +114,8 @@ void print_results( vector< example > &examples, NeuralNetwork &net )
 
     cout << "Example " << i << endl;
     cout << "  Inputs: "; print_vec( examples[ i ].inputs ); cout << endl;
-    cout << "  Output: "; print_vec( outputs ); cout << endl;
+    cout << "  Desired Output: "; print_vec( examples[ i ].outputs ); cout << endl;
+    cout << "   Actual Output: "; print_vec( outputs ); cout << endl;
   }
 
 }
@@ -87,6 +125,9 @@ void test_function( NeuralNetwork &net, double *table, int rows, int cols, doubl
   vector< example > examples;
   load_examples( table, rows, cols, examples);
   print_examples( examples);
+
+  cout << "Initial weights: \n";
+  net.print_net(); cout << endl;
 
   net.train( examples, err_thresh );
   print_results( examples, net );
@@ -144,6 +185,8 @@ int main()
 {
   test_explicit_xor_network();
 
+  srand( time( NULL ) );
+
   vector< int > structure;
   structure.push_back( 1 );
 
@@ -165,6 +208,7 @@ int main()
   test_function( nor_net, nor_truth_table, 4, 3, 0.003 );
   */
 
+  /*
   cout << "Training xor: \n";
 
   structure.clear();
@@ -173,6 +217,20 @@ int main()
 
   NeuralNetwork xor_net( 2, structure );
   test_function( xor_net, xor_truth_table, 4, 3, 0.003 );
+
+  cout << "Training xnor: \n";
+  NeuralNetwork xnor_net( 2, structure );
+  test_function( xnor_net, xnor_truth_table, 4, 3, 0.003 );
+  */
+
+  cout << "Training sin: \n";
+  structure.clear();
+  structure.push_back( 10 );
+//  structure.push_back( 5 );
+  structure.push_back( 1 );
+
+  NeuralNetwork sin_net( 1, structure );
+  test_function( sin_net, sin_table, 18, 2, 0.003 );
 
   return 0;
 }

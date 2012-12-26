@@ -10,12 +10,12 @@ const double E = 2.71828182846;
 double rand_clamped()
 {
   double r = rand();
-  return r / RAND_MAX;
+  return r / RAND_MAX / 10.0;
 }
 
 Neuron::Neuron( int num_inputs, bool zero )
 {
-  srand( time( NULL ) );
+//  srand( time( NULL ) );
   for( int i = 0; i < num_inputs + 1; i++ )
   {
     double val = zero ? 0.0 : rand_clamped();
@@ -86,9 +86,9 @@ void Neuron::update( vector< double > &inputs, double desired, double actual, do
   (*this)[ i ] += scale;
 }
 
-void SigmoidNeuron::update( vector< double > &inputs, double output, double err, double alpha )
+void SigmoidNeuron::update( vector< double > &inputs, double delta, double alpha )
 {
-  double scale = alpha * dsigmoid( output ) * err;
+  double scale = alpha * delta;
 
   int i;
   for( i = 0; i < ( int ) inputs.size(); i++ )
@@ -97,6 +97,24 @@ void SigmoidNeuron::update( vector< double > &inputs, double output, double err,
   }
 
   (*this)[ i ] += scale;
+}
+
+double SigmoidNeuron::compute_delta( double output, vector< SigmoidNeuron > &old_layer, double weight_index, vector< double > &old_deltas )
+{
+  double new_delta = 0.0;
+  for( unsigned long neuron_index = 0; neuron_index < old_layer.size(); neuron_index++ )
+  {
+    SigmoidNeuron &neuron = old_layer[ neuron_index ];
+    double old_delta = old_deltas[ neuron_index ];
+    double weight = neuron[ weight_index ];
+
+    new_delta += weight * old_delta;
+  }
+
+  double doutput = output * ( 1.0 - output );
+  new_delta *= doutput;
+
+  return new_delta;
 }
 
 double ThresholdNeuron::scale_factor( double desired_output, double actual_output, double alpha )

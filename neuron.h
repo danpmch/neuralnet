@@ -57,8 +57,10 @@ class SigmoidNeuron : public Neuron
     SigmoidNeuron( vector< double > &w ) : Neuron( w ) {}
 
     virtual double activation( vector< double > &inputs ) { return sigmoid( this->accumulate_activation( inputs ) ); }
+    virtual double dactivation( double act ) { return act * ( 1.0 - act ); }
 
-    virtual void update( vector< double > &inputs, double output, double err, double alpha = 1.0 );
+    virtual void update( vector< double > &inputs, double delta, double alpha = 1.0 );
+    virtual double compute_delta( double output, vector< SigmoidNeuron > &old_layer, double weight_index, vector< double > &old_deltas );
 
     static double sigmoid( double x );
     static double dsigmoid( double x );
